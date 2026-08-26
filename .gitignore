@@ -32,3 +32,5 @@ credentials.json
 
 # Vendored binaries
 /tools/
+
+/tools/node-v24.15.0-win-x64/

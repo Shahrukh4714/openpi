@@ -14,6 +14,11 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Path $PSScriptRoot -Parent
 
 $repoTools = Join-Path $root 'tools'
+$nodeDir = Join-Path $repoTools 'node-v24.15.0-win-x64'
+if (Test-Path $nodeDir) {
+    Write-Host '[env] using vendored Node 24.15.0'
+    $env:PATH = "$nodeDir;$env:PATH"
+}
 if (Test-Path $repoTools) { $env:PATH = "$repoTools;$env:PATH" }
 
 $wingetLinks = Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Links'
