@@ -11,7 +11,13 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$root = $PSScriptRoot | Split-Path | Split-Path
+$root = Split-Path -Path $PSScriptRoot -Parent
+
+$wingetLinks = Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Links'
+if ((Test-Path $wingetLinks) -and ($env:PATH -notlike "*$wingetLinks*")) {
+    $env:PATH = "$wingetLinks;$env:PATH"
+}
+if (-not (Get-Command jq -ErrorAction SilentlyContinue)) { throw 'jq not found on PATH (required by VSCodium scripts)' }
 $upstream = Join-Path $root 'upstream'
 $codiumDir = Join-Path $upstream 'vscodium'
 $vscodeDir = Join-Path $codiumDir 'vscode'
@@ -42,9 +48,13 @@ if ((Test-Path $codiumDir) -and -not $Force) {
 if ((Test-Path $vscodeDir) -and -not $Force) {
     Write-Host '[skip] vscode already cloned/prepared'
 } else {
-    Write-Host '[prepare] running VSCodium prepare_vscode.sh (clones microsoft/vscode, applies VSCodium patches)'
+    Write-Host '[prepare] get_repo.sh (clones pinned microsoft/vscode)'
     Push-Location $codiumDir
     try {
+        & $gitBash ./get_repo.sh
+        if ($LASTEXITCODE -ne 0) { throw 'get_repo.sh failed' }
+
+        Write-Host '[prepare] prepare_vscode.sh (overlays + VSCodium patches + product.json)'
         & $gitBash ./prepare_vscode.sh
         if ($LASTEXITCODE -ne 0) { throw 'prepare_vscode.sh failed' }
     } finally { Pop-Location }
