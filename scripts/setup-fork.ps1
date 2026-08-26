@@ -51,10 +51,18 @@ if ((Test-Path $codiumDir) -and -not $Force) {
 if ((Test-Path $vscodeDir) -and -not $Force) {
     Write-Host '[skip] vscode already cloned/prepared'
 } else {
-    Write-Host '[prepare] get_repo.sh (clones pinned microsoft/vscode)'
-    Push-Location $codiumDir
-    try {
-        & $gitBash ./get_repo.sh
+    Write-Host '[prepare] resolving pinned VS Code version via PowerShell (bypasses bash curl TLS issues)'
+    $updateApi = Invoke-RestMethod -Uri 'https://update.code.visualstudio.com/api/update/darwin/stable/0000000000000000000000000000000000000000' -TimeoutSec 30
+    $stableJson = @{ tag = $updateApi.name; commit = $updateApi.version } | ConvertTo-Json
+    $stablePath = Join-Path $codiumDir 'upstream\stable.json'
+    New-Item -ItemType Directory -Force -Path (Split-Path $stablePath) | Out-Null
+    Set-Content -Path $stablePath -Value $stableJson -Encoding Ascii
+    Write-Host "[prepare] pinned VS Code $($updateApi.name) ($($updateApi.version))"
+
+        Write-Host '[prepare] get_repo.sh (clones pinned microsoft/vscode)'
+        Push-Location $codiumDir
+        try {
+            & $gitBash ./get_repo.sh
         if ($LASTEXITCODE -ne 0) { throw 'get_repo.sh failed' }
 
         Write-Host '[prepare] prepare_vscode.sh (overlays + VSCodium patches + product.json)'
