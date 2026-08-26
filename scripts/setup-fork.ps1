@@ -50,6 +50,14 @@ if ((Test-Path $utilsSh) -and ((Get-Content $utilsSh -Raw) -match 'exit 4')) {
     Set-Content -Path $utilsSh -Value $patched -NoNewline -Encoding Ascii
 }
 
+$getRepoSh = Join-Path $codiumDir 'get_repo.sh'
+if (Test-Path $getRepoSh) {
+    Write-Host '[normalize] make get_repo.sh idempotent for existing clones'
+    $raw = Get-Content $getRepoSh -Raw
+    $patched = $raw.Replace('git remote add origin https://github.com/Microsoft/vscode.git', 'git remote add origin https://github.com/Microsoft/vscode.git 2>/dev/null || true')
+    Set-Content -Path $getRepoSh -Value $patched -NoNewline -Encoding Ascii
+}
+
 if ((Test-Path $codiumDir) -and -not $Force) {
     Write-Host '[skip] vscodium already cloned'
 } else {
