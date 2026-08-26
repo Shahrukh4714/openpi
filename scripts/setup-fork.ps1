@@ -24,6 +24,7 @@ if (-not (Get-Command jq -ErrorAction SilentlyContinue)) { throw 'jq not found o
 
 $env:VSCODE_QUALITY = 'stable'
 $env:CI_BUILD = 'no'
+$env:OS_NAME = 'windows'
 $upstream = Join-Path $root 'upstream'
 $codiumDir = Join-Path $upstream 'vscodium'
 $vscodeDir = Join-Path $codiumDir 'vscode'
