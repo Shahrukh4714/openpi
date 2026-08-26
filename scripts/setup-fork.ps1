@@ -21,6 +21,9 @@ if ((Test-Path $wingetLinks) -and ($env:PATH -notlike "*$wingetLinks*")) {
     $env:PATH = "$wingetLinks;$env:PATH"
 }
 if (-not (Get-Command jq -ErrorAction SilentlyContinue)) { throw 'jq not found on PATH (required by VSCodium scripts)' }
+
+$env:VSCODE_QUALITY = 'stable'
+$env:CI_BUILD = 'no'
 $upstream = Join-Path $root 'upstream'
 $codiumDir = Join-Path $upstream 'vscodium'
 $vscodeDir = Join-Path $codiumDir 'vscode'
