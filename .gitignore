@@ -1,0 +1,31 @@
+# Upstream sources & build artifacts (cloned by scripts/setup-fork.ps1)
+/upstream/
+/build/
+/dist/
+*.vsix
+*.exe
+*.msi
+*.zip
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Extension build
+extension/out/
+sidecar/dist/
+*.tsbuildinfo
+
+# Editor/OS cruft
+.vscode/*
+!.vscode/extensions.json
+.idea/
+Thumbs.db
+Desktop.ini
+
+# Secrets - never commit
+.env
+.env.*
+*.pem
+*apikey*
+credentials.json
