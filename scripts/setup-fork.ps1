@@ -13,6 +13,9 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Path $PSScriptRoot -Parent
 
+$repoTools = Join-Path $root 'tools'
+if (Test-Path $repoTools) { $env:PATH = "$repoTools;$env:PATH" }
+
 $wingetLinks = Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Links'
 if ((Test-Path $wingetLinks) -and ($env:PATH -notlike "*$wingetLinks*")) {
     $env:PATH = "$wingetLinks;$env:PATH"

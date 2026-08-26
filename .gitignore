@@ -29,3 +29,6 @@ Desktop.ini
 *.pem
 *apikey*
 credentials.json
+
+# Vendored binaries
+/tools/
