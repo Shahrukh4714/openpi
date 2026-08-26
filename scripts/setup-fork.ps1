@@ -86,6 +86,19 @@ if ((Test-Path $preparedMarker) -and -not $Force) {
             & $gitBash ./get_repo.sh
         if ($LASTEXITCODE -ne 0) { throw 'get_repo.sh failed' }
 
+        # Disable Spectre mitigation requirement for local dev builds (avoids needing Spectre libs)
+        $propsPath = Join-Path $vscodeDir 'Directory.Build.props'
+        if (-not (Test-Path $propsPath)) {
+            Set-Content -Path $propsPath -Value @'
+<Project>
+  <PropertyGroup>
+    <SpectreMitigation>false</SpectreMitigation>
+  </PropertyGroup>
+</Project>
+'@ -Encoding Ascii
+            Write-Host '[normalize] created Directory.Build.props (SpectreMitigation=false)'
+        }
+
         Write-Host '[prepare] prepare_vscode.sh (overlays + VSCodium patches + product.json)'
         & $gitBash ./prepare_vscode.sh
         if ($LASTEXITCODE -ne 0) { throw 'prepare_vscode.sh failed' }
