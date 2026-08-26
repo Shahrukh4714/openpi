@@ -11,8 +11,8 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@earendil-works/pi-agent-core": "^0.0.0",
-    "@earendil-works/pi-ai": "^0.0.0",
+    "@earendil-works/pi-agent-core": "0.84.3",
+    "@earendil-works/pi-ai": "0.84.3",
     "ws": "^8.18.0"
   },
   "devDependencies": {
