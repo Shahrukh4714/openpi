@@ -48,6 +48,9 @@ function Invoke-Git([string]$Repo, [string[]]$GitArgs) {
 
 New-Item -ItemType Directory -Force -Path $upstream | Out-Null
 
+git -C $codiumDir checkout -- patches/ 2>$null
+Remove-Item (Join-Path $codiumDir 'patches\*.bak') -ErrorAction SilentlyContinue
+
 $utilsSh = Join-Path $codiumDir 'utils.sh'
 if ((Test-Path $utilsSh) -and ((Get-Content $utilsSh -Raw) -match 'exit 4')) {
     Write-Host '[normalize] tolerate missing entries in VSCodium removal lists (upstream version skew)'
