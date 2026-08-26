@@ -1,0 +1,56 @@
+{
+  "name": "openpi-ui",
+  "displayName": "OpenPi",
+  "description": "AI pair programmer powered by the Pi Agent Harness - chat, inline edits, multi-file agent. BYOK or Go Tier.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "openpi",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["AI", "Chat", "Programming Languages"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "openpi.openChat", "title": "OpenPi: Open Chat", "icon": "$(comment-discussion)" },
+      { "command": "openpi.inlineEdit", "title": "OpenPi: Edit Selection (Ctrl+K)" },
+      { "command": "openpi.manageKeys", "title": "OpenPi: Manage API Keys & Tier" },
+      { "command": "openpi.showOnboarding", "title": "OpenPi: Get Started" }
+    ],
+    "keybindings": [
+      {
+        "command": "openpi.inlineEdit",
+        "key": "ctrl+k ctrl+k",
+        "when": "editorTextFocus && editorHasSelection"
+      }
+    ],
+    "configuration": {
+      "title": "OpenPi",
+      "properties": {
+        "openpi.sidecar.port": {
+          "type": "number",
+          "default": 8765,
+          "description": "Port used to talk to the local openpi-sidecar daemon."
+        },
+        "openpi.sidecar.executablePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the sidecar executable. Empty = use bundled dev runtime (node)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.90.0",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.5.0",
+    "ws": "^8.18.0"
+  }
+}
