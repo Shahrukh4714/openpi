@@ -59,9 +59,14 @@ if ((Test-Path $codiumDir) -and -not $Force) {
     if ($LASTEXITCODE -ne 0) { throw 'vscodium clone failed' }
 }
 
-if ((Test-Path $vscodeDir) -and -not $Force) {
+$preparedMarker = Join-Path $codiumDir '.openpi-prepared'
+
+if ((Test-Path $preparedMarker) -and -not $Force) {
     Write-Host '[skip] vscode already cloned/prepared'
 } else {
+    if (-not (Test-Path $vscodeDir)) {
+        Write-Host '[prepare] get_repo.sh (clones pinned microsoft/vscode)'
+    }
     Write-Host '[prepare] resolving pinned VS Code version via PowerShell (bypasses bash curl TLS issues)'
     $updateApi = Invoke-RestMethod -Uri 'https://update.code.visualstudio.com/api/update/darwin/stable/0000000000000000000000000000000000000000' -TimeoutSec 30
     $stableJson = @{ tag = $updateApi.name; commit = $updateApi.version } | ConvertTo-Json
@@ -80,6 +85,8 @@ if ((Test-Path $vscodeDir) -and -not $Force) {
         & $gitBash ./prepare_vscode.sh
         if ($LASTEXITCODE -ne 0) { throw 'prepare_vscode.sh failed' }
     } finally { Pop-Location }
+
+    Set-Content -Path $preparedMarker -Value "prepared $(Get-Date -Format o)" -Encoding Ascii
 }
 
 if (Test-Path $patchesDir) {
