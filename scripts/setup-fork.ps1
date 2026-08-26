@@ -42,6 +42,14 @@ function Invoke-Git([string]$Repo, [string[]]$GitArgs) {
 
 New-Item -ItemType Directory -Force -Path $upstream | Out-Null
 
+$utilsSh = Join-Path $codiumDir 'utils.sh'
+if ((Test-Path $utilsSh) -and ((Get-Content $utilsSh -Raw) -match 'exit 4')) {
+    Write-Host '[normalize] tolerate missing entries in VSCodium removal lists (upstream version skew)'
+    $raw = Get-Content $utilsSh -Raw
+    $patched = $raw -replace 'echo "Not found: \$\{ENTRY_PATH\}" >&2\r?\n(\s*)exit 4', ('echo "Not found (tolerated by OpenPi): ${ENTRY_PATH}" >&2')
+    Set-Content -Path $utilsSh -Value $patched -NoNewline -Encoding Ascii
+}
+
 if ((Test-Path $codiumDir) -and -not $Force) {
     Write-Host '[skip] vscodium already cloned'
 } else {
